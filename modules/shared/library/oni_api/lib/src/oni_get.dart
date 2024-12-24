@@ -1,4 +1,4 @@
-import 'package:entity_api/entity_api.dart';
+import 'package:entity/entity.dart';
 
 abstract class OniGet {
   Future<OniResult<dynamic>> get({

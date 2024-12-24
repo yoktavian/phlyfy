@@ -1,0 +1,4 @@
+name: pholyfy
+packages:
+  - modules/shared/*
+  - modules/shared/library/*

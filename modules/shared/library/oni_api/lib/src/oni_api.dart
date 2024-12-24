@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:entity_api/entity_api.dart';
+import 'package:entity/entity.dart';
 import 'package:oni_api/src/interceptor/oni_api_interceptor.dart';
 import 'package:oni_api/src/oni_get.dart';
 import 'package:oni_api/src/oni_post.dart';
@@ -50,10 +50,12 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
       final result = await _dio.get(path, queryParameters: queryParameters);
       return OniResult(result.data);
     } catch (e) {
-      if (e is DioError) {
-        return OniResult(OniException(e.message));
+      const defaultMessage = "unknown error";
+
+      if (e is DioException) {
+        return OniResult(OniException(e.message ?? defaultMessage));
       }
-      return OniResult(OniException('unknown error'));
+      return OniResult(OniException(defaultMessage));
     }
   }
 
@@ -71,10 +73,12 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
       );
       return OniResult(result.data);
     } catch (e) {
-      if (e is DioError) {
-        return OniResult(OniException(e.message));
+      const defaultMessage = "unknown error";
+
+      if (e is DioException) {
+        return OniResult(OniException(e.message ?? defaultMessage));
       }
-      return OniResult(OniException('unknown error'));
+      return OniResult(OniException(defaultMessage));
     }
   }
 
@@ -92,10 +96,12 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
       );
       return OniResult(result.data);
     } catch (e) {
-      if (e is DioError) {
-        return OniResult(OniException(e.message));
+      const defaultMessage = "unknown error";
+
+      if (e is DioException) {
+        return OniResult(OniException(e.message ?? defaultMessage));
       }
-      return OniResult(OniException('unknown error'));
+      return OniResult(OniException(defaultMessage));
     }
   }
 }
