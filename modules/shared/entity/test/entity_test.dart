@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:oni_api/oni_api.dart';
+import 'package:entity/entity.dart';
 
 void main() {
   test('adds one to input values', () {
