@@ -1,4 +1,4 @@
-import './oni_exception.dart';
+import 'oni_exception.dart';
 
 class OniResult<T> {
   final T result;
