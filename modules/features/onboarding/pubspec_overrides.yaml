@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: entity,oni_api
+dependency_overrides:
+  entity:
+    path: ../../shared/entity
+  oni_api:
+    path: ../../shared/library/oni_api

@@ -33,6 +33,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   onboarding:
     path: modules/features/onboarding
+  oni_api:
+    path: modules/shared/library/oni_api
+  go_router: ^14.6.2
 
 dev_dependencies:
   flutter_test:

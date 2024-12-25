@@ -1,7 +1,7 @@
 name: onboarding
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+publish_to: none
 
 environment:
   sdk: ^3.5.4
@@ -10,6 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  go_router: ^14.6.2
+  entity:
+    path: ../../shared/entity
+  oni_api:
+    path: ../../shared/library/oni_api
+  flutter_bloc: ^8.1.6
 
 dev_dependencies:
   flutter_test:

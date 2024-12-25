@@ -1,4 +1,7 @@
 name: pholyfy
 packages:
+  - modules/features/*
   - modules/shared/*
   - modules/shared/library/*
+script:
+  -
