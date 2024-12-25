@@ -41,26 +41,25 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
   }
 
   @override
-  Future<OniResult<dynamic>> get({
+  Future<OniResult> get({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
       final result = await _dio.get(path, queryParameters: queryParameters);
-      return OniResult(result.data);
+      return OniResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
-
       if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+        return OniResultError(e.message ?? defaultMessage);
       }
-      return OniResult(OniException(defaultMessage));
+      return OniResultError(defaultMessage);
     }
   }
 
   @override
-  Future<OniResult<dynamic>> post({
+  Future<OniResult> post({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -71,19 +70,18 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResult(result.data);
+      return OniResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
-
       if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+        return OniResultError(e.message ?? defaultMessage);
       }
-      return OniResult(OniException(defaultMessage));
+      return OniResultError(defaultMessage);
     }
   }
 
   @override
-  Future<OniResult<dynamic>> put({
+  Future<OniResult> put({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -94,14 +92,13 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResult(result.data);
+      return OniResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
-
       if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+        return OniResultError(e.message ?? defaultMessage);
       }
-      return OniResult(OniException(defaultMessage));
+      return OniResultError(defaultMessage);
     }
   }
 }
