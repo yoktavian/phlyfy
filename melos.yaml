@@ -2,6 +2,5 @@ name: pholyfy
 packages:
   - modules/features/*
   - modules/shared/*
+  - modules/shared/domain/*
   - modules/shared/library/*
-script:
-  -

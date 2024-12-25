@@ -24,11 +24,7 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
     );
 
     if (res is OniResultSuccess) {
-      print('success');
       final photos = ListPhotoResponse.fromJson(res.data);
-      print(photos.total);
-      print(photos.photos[0].id);
-      print(photos.photos.first.photographer.name);
     } else {
       print('error');
       print(res);
