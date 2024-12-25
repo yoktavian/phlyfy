@@ -10,7 +10,7 @@
 .svn/
 pubspec.lock
 migrate_working_dir/
-
+.env
 # IntelliJ related
 *.iml
 *.ipr

@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onboarding/onboarding.dart';
 import 'package:oni_api/oni_api.dart';
 import 'package:pholyfy/src/api/api.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+
   runApp(
     PholyfyApp(
       client: UnsplashClient(
         baseUrl: 'https://api.unsplash.com',
         interceptor: UnsplashInterceptor(
-          clientID: ''
+          clientID: dotenv.get('UNSPLASH_CLIENT_ID', fallback: ''),
         ),
       ),
     ),
