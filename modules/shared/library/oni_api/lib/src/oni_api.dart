@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:entity/entity.dart';
+import 'package:entity_api/api.dart';
 import 'package:oni_api/src/interceptor/oni_api_interceptor.dart';
 import 'package:oni_api/src/oni_get.dart';
 import 'package:oni_api/src/oni_post.dart';
@@ -41,25 +41,25 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
   }
 
   @override
-  Future<OniResult> get({
+  Future<ApiResult> get({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
       final result = await _dio.get(path, queryParameters: queryParameters);
-      return OniResultSuccess(result.data);
+      return ApiResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
       if (e is DioException) {
-        return OniResultError(e.message ?? defaultMessage);
+        return ApiResultError(e.message ?? defaultMessage);
       }
-      return OniResultError(defaultMessage);
+      return ApiResultError(defaultMessage);
     }
   }
 
   @override
-  Future<OniResult> post({
+  Future<ApiResult> post({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -70,18 +70,18 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResultSuccess(result.data);
+      return ApiResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
       if (e is DioException) {
-        return OniResultError(e.message ?? defaultMessage);
+        return ApiResultError(e.message ?? defaultMessage);
       }
-      return OniResultError(defaultMessage);
+      return ApiResultError(defaultMessage);
     }
   }
 
   @override
-  Future<OniResult> put({
+  Future<ApiResult> put({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -92,13 +92,13 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResultSuccess(result.data);
+      return ApiResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
       if (e is DioException) {
-        return OniResultError(e.message ?? defaultMessage);
+        return ApiResultError(e.message ?? defaultMessage);
       }
-      return OniResultError(defaultMessage);
+      return ApiResultError(defaultMessage);
     }
   }
 }

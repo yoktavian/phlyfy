@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   go_router: ^14.6.2
-  entity:
-    path: ../../shared/entity
+  entity_api:
+    path: ../../shared/domain/entity/entity_api
   oni_api:
     path: ../../shared/library/oni_api
   flutter_bloc: ^8.1.6
