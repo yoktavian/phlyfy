@@ -1,4 +1,4 @@
-# pholyfy
+# Pholyfy
 
 A photo gallery app project
 
@@ -25,3 +25,18 @@ This is the list of 3rd party library that I used in this project:
 1. Dio (for network library). Reference [here](https://pub.dev/packages/dio)
 2. Go Router (for navigation library). Reference [here](https://pub.dev/packages/go_router)
 3. Cached Network Image (for a widget to show an image from URL and caching it to make it more efficient). Reference [here](https://pub.dev/packages/cached_network_image)
+4. Flutter Bloc (for state management, I am using cubit). Reference [here](https://pub.dev/packages/flutter_bloc)
+
+## Features
+
+Some features that been implemented in this project is:
+1. Show list of photos using unsplash list photos API
+2. Show detail photo when one of the photo in the list been clicked, it will redirect to detail photo with larger image and some detail include description and photographer name
+3. Search page. User will be able to search some photo based on the keywords
+4. Pagination. Load more photo everytime user scroll down, when user already reach the bottom of the list they could see loading animation to wait the loading for a lil bit. Once the request succeed, it will load everything in the widget and continue pagination.
+
+## Architecture
+
+For architecture, I am trying to implement clean architecture so that it can be easier to maintain and has some kind of clear responsibility for each layer.
+I am trying to split the layer to presentation, domain, and data. Also i create couple modules for modularization, like `shared` module. Basically everything that can be reusable
+in every modules will be placed in this `shared` module.
