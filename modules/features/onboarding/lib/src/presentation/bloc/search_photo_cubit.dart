@@ -1,44 +1,44 @@
-import 'package:entity_api/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:onboarding/src/domain/entity/entity.dart';
 import 'package:onboarding/src/domain/entity/request/photo.dart';
-import 'package:onboarding/src/domain/repository/repository.dart';
-import '../../domain/entity/entity.dart';
+import 'package:onboarding/src/domain/repository/gallery/list_photo.dart';
+import 'package:onboarding/src/presentation/bloc/list_gallery_cubit.dart';
 
-enum ListGalleryLoadingState {
+enum SearchPhotoLoadingState {
   loading,
   loadMore,
   loaded,
 }
 
-class ListGalleryState {
+class SearchPhotoState {
   final String errorMessage;
   final int page;
-  final int totalPage;
-  final ListGalleryLoadingState loadingState;
+  final SearchPhotoLoadingState loadingState;
   final bool hasReachMaxPage;
   final List<Photo> photos;
+  final String keyword;
 
-  ListGalleryState({
+  SearchPhotoState({
     this.errorMessage = '',
+    this.keyword = '',
     this.page = 1,
-    this.totalPage = 20,
-    this.loadingState = ListGalleryLoadingState.loaded,
+    this.loadingState = SearchPhotoLoadingState.loading,
     this.hasReachMaxPage = false,
     List<Photo>? photos,
   }) : photos = photos ?? [];
 
-  ListGalleryState copyWith({
+  SearchPhotoState copyWith({
     String? errorMessage,
+    String? keyword,
     int? page,
-    int? totalPage,
-    ListGalleryLoadingState? loadingState,
+    SearchPhotoLoadingState? loadingState,
     bool? hasReachMaxPage,
     List<Photo>? photos,
   }) {
-    return ListGalleryState(
+    return SearchPhotoState(
       errorMessage: errorMessage ?? this.errorMessage,
+      keyword: keyword ?? this.keyword,
       page: page ?? this.page,
-      totalPage: totalPage ?? this.totalPage,
       loadingState: loadingState ?? this.loadingState,
       hasReachMaxPage: hasReachMaxPage ?? this.hasReachMaxPage,
       photos: photos ?? this.photos,
@@ -46,23 +46,26 @@ class ListGalleryState {
   }
 }
 
-class ListGalleryCubit extends Cubit<ListGalleryState> {
+class SearchPhotoCubit extends Cubit<SearchPhotoState> {
   final ListPhoto galleryRepo;
 
-  ListGalleryCubit(super.initialState, {required this.galleryRepo});
+  SearchPhotoCubit(super.initialState, {required this.galleryRepo});
 
-  void fetchGallery() async {
-    if (state.loadingState != ListGalleryLoadingState.loadMore) {
+  void searchPhoto(String keyword) async {
+    if (state.loadingState != SearchPhotoLoadingState.loadMore) {
       emit(
         state.copyWith(
-          loadingState: ListGalleryLoadingState.loading,
+          keyword: keyword,
+          page: 1,
+          photos: [],
+          loadingState: SearchPhotoLoadingState.loading,
         ),
       );
     }
 
     final result = await galleryRepo.listPhoto(
       ListPhotoRequest(
-        query: 'football',
+        query: keyword,
         perPage: 20,
         page: state.page,
       ),
@@ -79,7 +82,7 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
             photos: newPhotos,
             // below perPage that mean its already reach to max page.
             hasReachMaxPage: newPhotos.length < 20,
-            loadingState: ListGalleryLoadingState.loaded,
+            loadingState: SearchPhotoLoadingState.loaded,
           ),
         );
       },
@@ -90,31 +93,16 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
   }
 
   void loadMore() {
-    final isLoadMoreActive = state.loadingState == ListGalleryLoadingState.loadMore;
+    final isLoadMoreActive = state.loadingState == SearchPhotoLoadingState.loadMore;
     if (state.hasReachMaxPage || isLoadMoreActive) return;
 
     emit(
       state.copyWith(
-        loadingState: ListGalleryLoadingState.loadMore,
+        loadingState: SearchPhotoLoadingState.loadMore,
         page: state.page + 1,
       ),
     );
 
-    fetchGallery();
-  }
-}
-
-extension ApiResultExt on ApiResult {
-  void when({
-    required Function(dynamic json) onSuccess,
-    required Function(ApiResultError error) onError,
-  }) {
-    final result = this;
-
-    if (result is ApiResultSuccess) {
-      onSuccess(result.data);
-    } else {
-      onError(this as ApiResultError);
-    }
+    searchPhoto(state.keyword);
   }
 }

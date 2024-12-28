@@ -60,6 +60,14 @@ GoRouter _router(OniGet client) {
           );
         },
       ),
+      GoRoute(
+        path: '/search',
+        builder: (BuildContext _, GoRouterState state) {
+          return SearchPage(
+            galleryRepo: GalleryRepository(client: client),
+          );
+        },
+      ),
     ],
   );
 }

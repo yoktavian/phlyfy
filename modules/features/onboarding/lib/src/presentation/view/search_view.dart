@@ -1,35 +1,42 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:onboarding/src/presentation/bloc/list_gallery_cubit.dart';
+import 'package:onboarding/src/presentation/bloc/search_photo_cubit.dart';
+import './../widget/text_field_widget.dart';
 
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class SearchView extends StatefulWidget {
+  const SearchView({super.key});
 
   @override
-  State<HomeView> createState() => HomeViewState();
+  State<StatefulWidget> createState() => SearchViewState();
 }
 
-class HomeViewState extends State<HomeView> {
-  ScrollController? _galleryScrollController;
+class SearchViewState extends State<SearchView> {
+  ScrollController? _searchViewController;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
     super.initState();
-    _galleryScrollController = ScrollController();
-    _galleryScrollController?.addListener(() {
-      final currentPosition = _galleryScrollController?.position.pixels;
-      final maxScroll = _galleryScrollController?.position.maxScrollExtent;
+    _searchViewController = ScrollController();
+    _searchViewController?.addListener(() {
+      final currentPosition = _searchViewController?.position.pixels;
+      final maxScroll = _searchViewController?.position.maxScrollExtent;
       if (currentPosition == maxScroll) {
-        context.read<ListGalleryCubit>().loadMore();
+        context.read<SearchPhotoCubit>().loadMore();
       }
     });
   }
 
   @override
   void dispose() {
-    _galleryScrollController?.dispose();
+    if (_searchDebounce?.isActive == true) {
+      _searchDebounce?.cancel();
+    }
+
     super.dispose();
   }
 
@@ -37,45 +44,48 @@ class HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gallery Showcase'),
+        title: const Text('Search Photo'),
         backgroundColor: Colors.redAccent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            InkWell(
-              onTap: () => context.push('/search'),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.redAccent, width: 1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: const Text('Search Photo'),
-              ),
+            TextFieldWidget(
+              key: const Key('searchBar'),
+              placeholder: 'Input Some Keywords...',
+              onChanged: (value) {
+                // will cancel the active timer to start new one
+                if (_searchDebounce?.isActive ?? false) {
+                  _searchDebounce?.cancel();
+                }
+                // we listen all changes but will add some debounce about 500ms
+                // before sent it to API request. this operation is needed to
+                // make sure user complete to input the keyword, before we sent
+                // it to the API request, so it can be more efficient.
+                _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+                  context.read<SearchPhotoCubit>().searchPhoto(value);
+                });
+              },
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: BlocBuilder<ListGalleryCubit, ListGalleryState>(
+              child: BlocBuilder<SearchPhotoCubit, SearchPhotoState>(
                 builder: (context, state) {
-                  final isLoading = state.loadingState == ListGalleryLoadingState.loading;
-                  // if the state hasReachMaxPage is false, adding 1
-                  // to show loading animation for lazy load.
-                  final additionalLength = state.hasReachMaxPage ? 0 : 1;
+                  final isLoading = state.loadingState == SearchPhotoLoadingState.loading;
                   // for the grid will use 1 axis count if the state is loading
                   // to make loading animation in the middle. else will make it
                   // 2.
                   final gridCrossAxisCount = isLoading ? 1 : 2;
 
                   return GridView.builder(
-                    controller: _galleryScrollController,
+                    controller: _searchViewController,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: gridCrossAxisCount,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
                     ),
+                    itemCount: state.photos.length,
                     itemBuilder: (context, index) {
                       final photos = state.photos;
 
@@ -88,6 +98,8 @@ class HomeViewState extends State<HomeView> {
                       }
 
                       final photo = photos[index];
+                      // Will use No description label as default value when
+                      // the description is not provided.
                       final photoDescription = photo.description == ""
                           ? "No description"
                           : photo.description;
@@ -149,7 +161,6 @@ class HomeViewState extends State<HomeView> {
                         ),
                       );
                     },
-                    itemCount: state.photos.length + additionalLength,
                   );
                 },
               ),
