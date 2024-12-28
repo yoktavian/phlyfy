@@ -1,6 +1,6 @@
-import 'package:entity_api/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/repository/repository.dart';
+import '../../domain/repository/repository.dart';
+import '../../presentation/extension/extension.dart';
 import '../../domain/entity/entity.dart' as entity;
 
 enum ListPhotoLoadingState {
@@ -100,20 +100,5 @@ class ListPhotoCubit extends Cubit<ListPhotoState> {
     );
 
     fetchPhotos();
-  }
-}
-
-extension ApiResultExt on ApiResult {
-  void when({
-    required Function(dynamic json) onSuccess,
-    required Function(ApiResultError error) onError,
-  }) {
-    final result = this;
-
-    if (result is ApiResultSuccess) {
-      onSuccess(result.data);
-    } else {
-      onError(this as ApiResultError);
-    }
   }
 }

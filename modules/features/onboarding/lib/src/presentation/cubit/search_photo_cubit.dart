@@ -1,10 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/entity/request/search_photo.dart';
-import 'package:onboarding/src/domain/entity/response/search_photo_response.dart';
-import 'package:onboarding/src/domain/repository/photo/search_photo.dart';
+import '../../domain/entity/request/search_photo.dart';
+import '../../domain/entity/response/search_photo_response.dart';
+import '../../domain/repository/photo/search_photo.dart';
+import '../../presentation/extension/api/api_result.dart';
 import '../../domain/entity/entity.dart';
-import '../../domain/repository/photo/list_photo.dart';
-import '../bloc/list_photo_cubit.dart';
 
 enum SearchPhotoLoadingState {
   loading,

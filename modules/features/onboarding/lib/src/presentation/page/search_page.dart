@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/repository/photo/search_photo.dart';
-import '../../domain/repository/photo/list_photo.dart';
-import 'package:onboarding/src/presentation/bloc/search_photo_cubit.dart';
-import 'package:onboarding/src/presentation/view/search_view.dart';
+import '../../domain/repository/photo/search_photo.dart';
+import '../../presentation/cubit/search_photo_cubit.dart';
+import '../../presentation/view/search_view.dart';
 
 class SearchPage extends StatelessWidget {
   final SearchPhoto photoRepo;

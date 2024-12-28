@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/repository/repository.dart';
-import 'package:onboarding/src/presentation/bloc/list_photo_cubit.dart';
-import 'package:onboarding/src/presentation/view/home_view.dart';
+import '../../domain/repository/repository.dart';
+import '../../presentation/cubit/list_photo_cubit.dart';
+import '../../presentation/view/home_view.dart';
 
 class HomePage extends StatelessWidget {
   final ListPhoto photoRepo;

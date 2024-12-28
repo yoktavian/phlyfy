@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:onboarding/src/presentation/bloc/search_photo_cubit.dart';
+import '../../presentation/cubit/search_photo_cubit.dart';
 import './../widget/text_field_widget.dart';
 
 class SearchView extends StatefulWidget {
