@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:entity/entity.dart';
+import 'package:entity_api/api.dart';
 import 'package:oni_api/src/interceptor/oni_api_interceptor.dart';
 import 'package:oni_api/src/oni_get.dart';
 import 'package:oni_api/src/oni_post.dart';
@@ -41,26 +41,36 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
   }
 
   @override
-  Future<OniResult<dynamic>> get({
+  Future<ApiResult> get({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
   }) async {
     try {
       final result = await _dio.get(path, queryParameters: queryParameters);
-      return OniResult(result.data);
-    } catch (e) {
+      return ApiResultSuccess(result.data);
+    } on DioException catch (e) {
       const defaultMessage = "unknown error";
+      final errorResponse = e.response;
 
-      if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+      if (errorResponse != null && errorResponse.data != null) {
+        final errorData = errorResponse.data;
+
+        if (errorData['errors'] != null && errorData['errors'] is List) {
+          // Extract error message from the list
+          String errorMessage = errorData['errors'][0];
+          return ApiResultError(errorMessage);
+        }
       }
-      return OniResult(OniException(defaultMessage));
+
+      return ApiResultError(defaultMessage);
+    } catch (e) {
+      return ApiResultError("unknown error");
     }
   }
 
   @override
-  Future<OniResult<dynamic>> post({
+  Future<ApiResult> post({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -71,19 +81,18 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResult(result.data);
+      return ApiResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
-
       if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+        return ApiResultError(e.message ?? defaultMessage);
       }
-      return OniResult(OniException(defaultMessage));
+      return ApiResultError(defaultMessage);
     }
   }
 
   @override
-  Future<OniResult<dynamic>> put({
+  Future<ApiResult> put({
     required String path,
     data,
     Map<String, dynamic>? queryParameters,
@@ -94,14 +103,13 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
         data: data,
         queryParameters: queryParameters,
       );
-      return OniResult(result.data);
+      return ApiResultSuccess(result.data);
     } catch (e) {
       const defaultMessage = "unknown error";
-
       if (e is DioException) {
-        return OniResult(OniException(e.message ?? defaultMessage));
+        return ApiResultError(e.message ?? defaultMessage);
       }
-      return OniResult(OniException(defaultMessage));
+      return ApiResultError(defaultMessage);
     }
   }
 }

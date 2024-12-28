@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: oni_api
+dependency_overrides:
+  oni_api:
+    path: ../../shared/library/oni_api
