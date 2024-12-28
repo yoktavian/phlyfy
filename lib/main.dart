@@ -40,7 +40,9 @@ GoRouter _router(OniGet client) {
       GoRoute(
         path: '/',
         builder: (BuildContext _, GoRouterState __) {
-          return HomePage(client: client);
+          return HomePage(
+            galleryRepo: GalleryRepository(client: client),
+          );
         },
       ),
     ],

@@ -49,12 +49,23 @@ abstract class OniApi implements OniGet, OniPut, OniPost {
     try {
       final result = await _dio.get(path, queryParameters: queryParameters);
       return ApiResultSuccess(result.data);
-    } catch (e) {
+    } on DioException catch (e) {
       const defaultMessage = "unknown error";
-      if (e is DioException) {
-        return ApiResultError(e.message ?? defaultMessage);
+      final errorResponse = e.response;
+
+      if (errorResponse != null && errorResponse.data != null) {
+        final errorData = errorResponse.data;
+
+        if (errorData['errors'] != null && errorData['errors'] is List) {
+          // Extract error message from the list
+          String errorMessage = errorData['errors'][0];
+          return ApiResultError(errorMessage);
+        }
       }
+
       return ApiResultError(defaultMessage);
+    } catch (e) {
+      return ApiResultError("unknown error");
     }
   }
 
