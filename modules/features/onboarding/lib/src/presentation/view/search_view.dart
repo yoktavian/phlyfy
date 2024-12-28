@@ -72,8 +72,11 @@ class SearchViewState extends State<SearchView> {
             Expanded(
               child: BlocBuilder<SearchPhotoCubit, SearchPhotoState>(
                 builder: (context, state) {
-                  final isLoading =
-                      state.loadingState == SearchPhotoLoadingState.loading;
+                  final isLoading = state.loadingState == SearchPhotoLoadingState.loading;
+                  // if we already reach max page or in loading condition will not adding
+                  // any additional length, but for other than that condition lazy load will
+                  // continue so we need to add 1 length to show loading animation.
+                  final additionalLength = state.hasReachMaxPage || !isLoading ? 0 : 1;
                   // for the grid will use 1 axis count if the state is loading
                   // to make loading animation in the middle. else will make it
                   // 2.
@@ -86,7 +89,7 @@ class SearchViewState extends State<SearchView> {
                       crossAxisSpacing: 4,
                       mainAxisSpacing: 4,
                     ),
-                    itemCount: state.photos.length,
+                    itemCount: state.photos.length + additionalLength,
                     itemBuilder: (context, index) {
                       final photos = state.photos;
 

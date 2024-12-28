@@ -23,7 +23,7 @@ class SearchPhotoState {
     this.errorMessage = '',
     this.keyword = '',
     this.page = 1,
-    this.loadingState = SearchPhotoLoadingState.loading,
+    this.loadingState = SearchPhotoLoadingState.loaded,
     this.hasReachMaxPage = false,
     List<Photo>? photos,
   }) : photos = photos ?? [];
