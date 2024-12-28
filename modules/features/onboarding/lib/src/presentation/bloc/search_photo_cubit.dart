@@ -1,8 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/entity/entity.dart';
-import 'package:onboarding/src/domain/entity/request/photo.dart';
-import 'package:onboarding/src/domain/repository/gallery/list_photo.dart';
-import 'package:onboarding/src/presentation/bloc/list_gallery_cubit.dart';
+import 'package:onboarding/src/domain/entity/request/search_photo.dart';
+import 'package:onboarding/src/domain/entity/response/search_photo_response.dart';
+import 'package:onboarding/src/domain/repository/photo/search_photo.dart';
+import '../../domain/entity/entity.dart';
+import '../../domain/repository/photo/list_photo.dart';
+import '../bloc/list_photo_cubit.dart';
 
 enum SearchPhotoLoadingState {
   loading,
@@ -47,9 +49,9 @@ class SearchPhotoState {
 }
 
 class SearchPhotoCubit extends Cubit<SearchPhotoState> {
-  final ListPhoto galleryRepo;
+  final SearchPhoto photoRepo;
 
-  SearchPhotoCubit(super.initialState, {required this.galleryRepo});
+  SearchPhotoCubit(super.initialState, {required this.photoRepo});
 
   void searchPhoto(String keyword) async {
     if (state.loadingState != SearchPhotoLoadingState.loadMore) {
@@ -63,8 +65,8 @@ class SearchPhotoCubit extends Cubit<SearchPhotoState> {
       );
     }
 
-    final result = await galleryRepo.listPhoto(
-      ListPhotoRequest(
+    final result = await photoRepo.searchPhoto(
+      SearchPhotoRequest(
         query: keyword,
         perPage: 20,
         page: state.page,
@@ -73,7 +75,7 @@ class SearchPhotoCubit extends Cubit<SearchPhotoState> {
 
     result.when(
       onSuccess: (json) {
-        final photoResponse = ListPhotoResponse.fromJson(json);
+        final photoResponse = SearchPhotoResponse.fromJson(json);
         final newPhotos = state.photos;
         newPhotos.addAll(photoResponse.photos);
         emit(

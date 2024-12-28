@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:onboarding/src/presentation/bloc/list_gallery_cubit.dart';
+import 'package:onboarding/src/presentation/bloc/list_photo_cubit.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -22,7 +22,7 @@ class HomeViewState extends State<HomeView> {
       final currentPosition = _galleryScrollController?.position.pixels;
       final maxScroll = _galleryScrollController?.position.maxScrollExtent;
       if (currentPosition == maxScroll) {
-        context.read<ListGalleryCubit>().loadMore();
+        context.read<ListPhotoCubit>().loadMore();
       }
     });
   }
@@ -58,9 +58,9 @@ class HomeViewState extends State<HomeView> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: BlocBuilder<ListGalleryCubit, ListGalleryState>(
+              child: BlocBuilder<ListPhotoCubit, ListPhotoState>(
                 builder: (context, state) {
-                  final isLoading = state.loadingState == ListGalleryLoadingState.loading;
+                  final isLoading = state.loadingState == ListPhotoLoadingState.loading;
                   // if the state hasReachMaxPage is false, adding 1
                   // to show loading animation for lazy load.
                   final additionalLength = state.hasReachMaxPage ? 0 : 1;

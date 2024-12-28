@@ -1,41 +1,40 @@
 import 'package:entity_api/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:onboarding/src/domain/entity/request/photo.dart';
 import 'package:onboarding/src/domain/repository/repository.dart';
-import '../../domain/entity/entity.dart';
+import '../../domain/entity/entity.dart' as entity;
 
-enum ListGalleryLoadingState {
+enum ListPhotoLoadingState {
   loading,
   loadMore,
   loaded,
 }
 
-class ListGalleryState {
+class ListPhotoState {
   final String errorMessage;
   final int page;
   final int totalPage;
-  final ListGalleryLoadingState loadingState;
+  final ListPhotoLoadingState loadingState;
   final bool hasReachMaxPage;
-  final List<Photo> photos;
+  final List<entity.Photo> photos;
 
-  ListGalleryState({
+  ListPhotoState({
     this.errorMessage = '',
     this.page = 1,
     this.totalPage = 20,
-    this.loadingState = ListGalleryLoadingState.loaded,
+    this.loadingState = ListPhotoLoadingState.loaded,
     this.hasReachMaxPage = false,
-    List<Photo>? photos,
+    List<entity.Photo>? photos,
   }) : photos = photos ?? [];
 
-  ListGalleryState copyWith({
+  ListPhotoState copyWith({
     String? errorMessage,
     int? page,
     int? totalPage,
-    ListGalleryLoadingState? loadingState,
+    ListPhotoLoadingState? loadingState,
     bool? hasReachMaxPage,
-    List<Photo>? photos,
+    List<entity.Photo>? photos,
   }) {
-    return ListGalleryState(
+    return ListPhotoState(
       errorMessage: errorMessage ?? this.errorMessage,
       page: page ?? this.page,
       totalPage: totalPage ?? this.totalPage,
@@ -46,23 +45,22 @@ class ListGalleryState {
   }
 }
 
-class ListGalleryCubit extends Cubit<ListGalleryState> {
-  final ListPhoto galleryRepo;
+class ListPhotoCubit extends Cubit<ListPhotoState> {
+  final ListPhoto photoRepo;
 
-  ListGalleryCubit(super.initialState, {required this.galleryRepo});
+  ListPhotoCubit(super.initialState, {required this.photoRepo});
 
-  void fetchGallery() async {
-    if (state.loadingState != ListGalleryLoadingState.loadMore) {
+  void fetchPhotos() async {
+    if (state.loadingState != ListPhotoLoadingState.loadMore) {
       emit(
         state.copyWith(
-          loadingState: ListGalleryLoadingState.loading,
+          loadingState: ListPhotoLoadingState.loading,
         ),
       );
     }
 
-    final result = await galleryRepo.listPhoto(
-      ListPhotoRequest(
-        query: 'football',
+    final result = await photoRepo.listPhoto(
+      entity.ListPhotoRequest(
         perPage: 20,
         page: state.page,
       ),
@@ -70,7 +68,7 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
 
     result.when(
       onSuccess: (json) {
-        final photoResponse = ListPhotoResponse.fromJson(json);
+        final photoResponse = entity.ListPhotoResponse.fromJson(json);
         final newPhotos = state.photos;
         newPhotos.addAll(photoResponse.photos);
         emit(
@@ -79,7 +77,7 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
             photos: newPhotos,
             // below perPage that mean its already reach to max page.
             hasReachMaxPage: newPhotos.length < 20,
-            loadingState: ListGalleryLoadingState.loaded,
+            loadingState: ListPhotoLoadingState.loaded,
           ),
         );
       },
@@ -90,17 +88,18 @@ class ListGalleryCubit extends Cubit<ListGalleryState> {
   }
 
   void loadMore() {
-    final isLoadMoreActive = state.loadingState == ListGalleryLoadingState.loadMore;
+    final isLoadMoreActive =
+        state.loadingState == ListPhotoLoadingState.loadMore;
     if (state.hasReachMaxPage || isLoadMoreActive) return;
 
     emit(
       state.copyWith(
-        loadingState: ListGalleryLoadingState.loadMore,
+        loadingState: ListPhotoLoadingState.loadMore,
         page: state.page + 1,
       ),
     );
 
-    fetchGallery();
+    fetchPhotos();
   }
 }
 

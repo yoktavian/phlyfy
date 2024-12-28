@@ -1,27 +1,20 @@
 import '../photo/photo.dart';
 
 class ListPhotoResponse {
-  final int total;
-  final int totalPages;
   final List<Photo> photos;
 
   ListPhotoResponse({
-    required this.total,
-    required this.totalPages,
     required this.photos,
   });
 
-  factory ListPhotoResponse.fromJson(Map<String, dynamic> json) {
-    final results = json['results'] as List;
-    final List<Photo> photos = results
+  factory ListPhotoResponse.fromJson(List<dynamic> json) {
+    final List<Photo> photos = json
         .map(
-          (item) => Photo.fromJson(item),
+          (item) => Photo.fromJson(item as Map<String, dynamic>),
         )
         .toList();
 
     return ListPhotoResponse(
-      total: json['total'],
-      totalPages: json['total_pages'],
       photos: photos,
     );
   }

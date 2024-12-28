@@ -72,7 +72,8 @@ class SearchViewState extends State<SearchView> {
             Expanded(
               child: BlocBuilder<SearchPhotoCubit, SearchPhotoState>(
                 builder: (context, state) {
-                  final isLoading = state.loadingState == SearchPhotoLoadingState.loading;
+                  final isLoading =
+                      state.loadingState == SearchPhotoLoadingState.loading;
                   // for the grid will use 1 axis count if the state is loading
                   // to make loading animation in the middle. else will make it
                   // 2.
