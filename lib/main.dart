@@ -41,7 +41,7 @@ GoRouter _router(OniGet client) {
         path: '/',
         builder: (BuildContext _, GoRouterState __) {
           return HomePage(
-            galleryRepo: GalleryRepository(client: client),
+            photoRepo: PhotoRepository(client: client),
           );
         },
       ),
@@ -57,6 +57,14 @@ GoRouter _router(OniGet client) {
             imageUrl: imageUrl,
             description: description,
             photographerName: photographerName,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (BuildContext _, GoRouterState state) {
+          return SearchPage(
+            photoRepo: PhotoRepository(client: client),
           );
         },
       ),

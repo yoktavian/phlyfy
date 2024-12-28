@@ -1,1 +1,1 @@
-export './gallery/gallery.dart';
+export './photo/photo.dart';

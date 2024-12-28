@@ -1,2 +1,2 @@
-export './gallery/gallery.dart';
-export './gallery/list_photo.dart';
+export './photo/photo.dart';
+export './photo/list_photo.dart';
