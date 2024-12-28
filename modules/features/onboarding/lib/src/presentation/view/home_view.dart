@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:onboarding/src/presentation/bloc/list_gallery_cubit.dart';
 
 class HomeView extends StatefulWidget {
@@ -62,11 +63,20 @@ class HomeViewState extends State<HomeView> {
 
               final photo = photos[index];
               final photoDescription = photo.description == ""
-                  ? "no description"
+                  ? "No description"
                   : photo.description;
 
               return GestureDetector(
-                  onTap: () => {},
+                  onTap: () => {
+                    context.push(
+                        '/detail',
+                          extra: {
+                            'imageUrl': photo.urlPhoto.full,
+                            'description': photoDescription,
+                            'photographerName': photo.photographer.name,
+                          },
+                        )
+                  },
                   child: Stack(
                     children: [
                       Positioned(

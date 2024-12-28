@@ -45,6 +45,21 @@ GoRouter _router(OniGet client) {
           );
         },
       ),
+      GoRoute(
+        path: '/detail',
+        builder: (BuildContext _, GoRouterState state) {
+          final extraData = state.extra as Map<String, String>;
+          final imageUrl = extraData['imageUrl'] ?? '';
+          final description = extraData['description'] ?? '';
+          final photographerName = extraData['photographerName'] ?? '';
+
+          return PhotoDetailPage(
+            imageUrl: imageUrl,
+            description: description,
+            photographerName: photographerName,
+          );
+        },
+      ),
     ],
   );
 }
