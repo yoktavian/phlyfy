@@ -12,7 +12,7 @@ enum ListPhotoLoadingState {
 class ListPhotoState {
   final String errorMessage;
   final int page;
-  final int totalPage;
+  final int totalPerPage;
   final ListPhotoLoadingState loadingState;
   final bool hasReachMaxPage;
   final List<entity.Photo> photos;
@@ -20,7 +20,7 @@ class ListPhotoState {
   ListPhotoState({
     this.errorMessage = '',
     this.page = 1,
-    this.totalPage = 20,
+    this.totalPerPage = 20,
     this.loadingState = ListPhotoLoadingState.loaded,
     this.hasReachMaxPage = false,
     List<entity.Photo>? photos,
@@ -29,7 +29,7 @@ class ListPhotoState {
   ListPhotoState copyWith({
     String? errorMessage,
     int? page,
-    int? totalPage,
+    int? totalPerPage,
     ListPhotoLoadingState? loadingState,
     bool? hasReachMaxPage,
     List<entity.Photo>? photos,
@@ -37,7 +37,7 @@ class ListPhotoState {
     return ListPhotoState(
       errorMessage: errorMessage ?? this.errorMessage,
       page: page ?? this.page,
-      totalPage: totalPage ?? this.totalPage,
+      totalPerPage: totalPerPage ?? this.totalPerPage,
       loadingState: loadingState ?? this.loadingState,
       hasReachMaxPage: hasReachMaxPage ?? this.hasReachMaxPage,
       photos: photos ?? this.photos,
@@ -61,7 +61,7 @@ class ListPhotoCubit extends Cubit<ListPhotoState> {
 
     final result = await photoRepo.listPhoto(
       entity.ListPhotoRequest(
-        perPage: 20,
+        perPage: state.totalPerPage,
         page: state.page,
       ),
     );
@@ -75,8 +75,8 @@ class ListPhotoCubit extends Cubit<ListPhotoState> {
           state.copyWith(
             errorMessage: '',
             photos: newPhotos,
-            // below perPage that mean its already reach to max page.
-            hasReachMaxPage: newPhotos.length < 20,
+            // below totalPerPage that mean its already reach to max page.
+            hasReachMaxPage: newPhotos.length < state.totalPerPage,
             loadingState: ListPhotoLoadingState.loaded,
           ),
         );
@@ -88,13 +88,19 @@ class ListPhotoCubit extends Cubit<ListPhotoState> {
   }
 
   void loadMore() {
-    final isLoadMoreActive =
-        state.loadingState == ListPhotoLoadingState.loadMore;
+    final isLoadMoreActive = state.loadingState == ListPhotoLoadingState.loadMore;
+    // there is a possibility user keep scrolling up and down multiple times, so
+    // load more item can be called couple time and makes the request will be
+    // duplicated. To avoid that, we check the loading state status here. if the
+    // status is still trying to load More item then it will be returned. Same as
+    // when we already reach max page, that means we don't have another data to load
+    // from DB. So if the flag hasReachMaxPage is true, this function will be returned.
     if (state.hasReachMaxPage || isLoadMoreActive) return;
 
     emit(
       state.copyWith(
         loadingState: ListPhotoLoadingState.loadMore,
+        // adding + 1 to load the data from the next page.
         page: state.page + 1,
       ),
     );

@@ -14,6 +14,7 @@ enum SearchPhotoLoadingState {
 class SearchPhotoState {
   final String errorMessage;
   final int page;
+  final int totalPerPage;
   final SearchPhotoLoadingState loadingState;
   final bool hasReachMaxPage;
   final List<Photo> photos;
@@ -23,6 +24,7 @@ class SearchPhotoState {
     this.errorMessage = '',
     this.keyword = '',
     this.page = 1,
+    this.totalPerPage = 20,
     this.loadingState = SearchPhotoLoadingState.loaded,
     this.hasReachMaxPage = false,
     List<Photo>? photos,
@@ -32,6 +34,7 @@ class SearchPhotoState {
     String? errorMessage,
     String? keyword,
     int? page,
+    int? totalPerPage,
     SearchPhotoLoadingState? loadingState,
     bool? hasReachMaxPage,
     List<Photo>? photos,
@@ -40,6 +43,7 @@ class SearchPhotoState {
       errorMessage: errorMessage ?? this.errorMessage,
       keyword: keyword ?? this.keyword,
       page: page ?? this.page,
+      totalPerPage: totalPerPage ?? this.totalPerPage,
       loadingState: loadingState ?? this.loadingState,
       hasReachMaxPage: hasReachMaxPage ?? this.hasReachMaxPage,
       photos: photos ?? this.photos,
@@ -67,7 +71,7 @@ class SearchPhotoCubit extends Cubit<SearchPhotoState> {
     final result = await photoRepo.searchPhoto(
       SearchPhotoRequest(
         query: keyword,
-        perPage: 20,
+        perPage: state.totalPerPage,
         page: state.page,
       ),
     );
@@ -81,8 +85,8 @@ class SearchPhotoCubit extends Cubit<SearchPhotoState> {
           state.copyWith(
             errorMessage: '',
             photos: newPhotos,
-            // below perPage that mean its already reach to max page.
-            hasReachMaxPage: newPhotos.length < 20,
+            // below totalPerPage that mean its already reach to max page.
+            hasReachMaxPage: newPhotos.length < state.totalPerPage,
             loadingState: SearchPhotoLoadingState.loaded,
           ),
         );
@@ -95,6 +99,12 @@ class SearchPhotoCubit extends Cubit<SearchPhotoState> {
 
   void loadMore() {
     final isLoadMoreActive = state.loadingState == SearchPhotoLoadingState.loadMore;
+    // there is a possibility user keep scrolling up and down multiple times, so
+    // load more item can be called couple time and makes the request will be
+    // duplicated. To avoid that, we check the loading state status here. if the
+    // status is still trying to load More item then it will be returned. Same as
+    // when we already reach max page, that means we don't have another data to load
+    // from DB. So if the flag hasReachMaxPage is true, this function will be returned.
     if (state.hasReachMaxPage || isLoadMoreActive) return;
 
     emit(
